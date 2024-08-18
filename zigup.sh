@@ -334,7 +334,7 @@ get_latest_local_tool_version() {
 
     if [[ "${INST_LOCAL[*]}" != "" ]]; then
         local SORTED
-        SORTED=$(printf '%s\n' "${INST_LOCAL[*]}" | command sort -Vr) ||
+        SORTED=$(printf '%s\n' "${INST_LOCAL[@]}" | command sort -Vr) ||
             fail 'failed sorting' "versions: ${INST_LOCAL[*]}"
         read -r TOOL_VER < <(echo "${SORTED[@]}")
     else
