@@ -48,7 +48,7 @@ end_debug() {
 readonly INST_NAME=zigup
 readonly LANG_NAME=Zig
 readonly TOOL_NAME=zig
-readonly VERSION=0.1.0
+readonly VERSION=0.1.1
 
 readonly INST_DIR="${INST_DIR-$HOME/.$INST_NAME}"
 readonly TOOL_DIR=${TOOL_DIR-$HOME/.$TOOL_NAME}
