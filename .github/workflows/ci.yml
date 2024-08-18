@@ -1,0 +1,26 @@
+name: Test or Release
+
+on:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - '**'
+    paths-ignore:
+      - '**/*.md'
+      - LICENSE
+  pull_request:
+
+jobs:
+  test-or-release:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ludeeus/action-shellcheck@master
+    - uses: prantlf/publish-release-action@v1
+      if: ${{ github.ref_name == 'master' }}
+      with:
+        no-archives: true
+        bump-files: install.sh,goup.sh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
