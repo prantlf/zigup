@@ -188,9 +188,9 @@ detect_platform() {
     OS=${UNAME[0],,}
     ARCH=${UNAME[1],,}
 
-    if [[ $OS = dragonflybsd ]]; then
-        OS=dragonfly
-    elif ! [[ ' darwin freebsd linux windows ' =~ [[:space:]]${OS}[[:space:]] ]]; then
+    if [[ $OS = darwin ]]; then
+        OS=macos
+    elif ! [[ ' macos freebsd linux windows ' =~ [[:space:]]${OS}[[:space:]] ]]; then
         fail unsupported "operating system $OS"
     fi
 
@@ -221,14 +221,14 @@ detect_platform() {
 
     PLATFORM=$OS-$ARCH
 
-    if [[ $PLATFORM = darwin-x86_64 ]]; then
+    if [[ $PLATFORM = macos-x86_64 ]]; then
         if [[ $(sysctl -n sysctl.proc_translated 2>/dev/null) = 1 ]]; then
-            PLATFORM=darwin-aarch64
+            PLATFORM=macos-aarch64
             pass 'changing platform' "to $PLATFORM because Rosetta 2 was detected"
         fi
     fi
 
-    if ! [[ " darwin-x86_64 darwin-aarch64 freebsd-x86_64 linux-x86 linux-x86_64 linux-aarch64 linux-armv7a linux-powerpc64le linux-riscv64 windows-x86 windows-x86_64 windows-aarch64 " =~ [[:space:]]${PLATFORM}[[:space:]] ]]; then
+    if ! [[ " macos-x86_64 macos-aarch64 freebsd-x86_64 linux-x86 linux-x86_64 linux-aarch64 linux-armv7a linux-powerpc64le linux-riscv64 windows-x86 windows-x86_64 windows-aarch64 " =~ [[:space:]]${PLATFORM}[[:space:]] ]]; then
         fail unsupported "platform $PLATFORM"
     fi
 
@@ -278,10 +278,6 @@ download_tool_version() {
             fail 'failed downloading and unpacking' "$TOOL_URL_PKG to $INST_DIR/$VER"
         end_debug
     fi
-    command mv "$INST_DIR/$VER/$VER_NAME/*" "$INST_DIR/$VER/" ||
-        fail 'failed moving' "$INST_DIR/$VER/$VER_NAME/* to $INST_DIR/$VER/"
-    command rmdir "$INST_DIR/$VER/$VER_NAME" ||
-        fail 'failed deleting' "$INST_DIR/$VER/$VER_NAME"
     pass 'downloaded and upacked' "$INST_DIR/$VER"
 }
 
@@ -493,35 +489,33 @@ get_remote_versions() {
     check_jq_exists
     check_sort_exists
 
-    detect_platform
-
     start_debug "downloading $TOOL_URL_LIST"
     local ALL_VERSIONS
     ALL_VERSIONS=$(command curl -f "$PROGRESS" "$TOOL_URL_LIST" | command jq -r 'keys[]' | command sort -Vr) ||
         fail 'failed downloading and processing' "the output from $TOOL_URL_LIST"
     end_debug
-    local STABLE_VERSIONS=()
+    TOOL_REMOTE_VERSIONS=()
     for DIR in $ALL_VERSIONS; do
         if [[ $DIR != master ]]; then
-            STABLE_VERSIONS+=("$DIR")
+            TOOL_REMOTE_VERSIONS+=("$DIR")
         fi
     done
-    TOOL_REMOTE_VERSIONS=$(printf '%s\n' "${STABLE_VERSIONS[@]}")
 }
 
 get_latest_remote_version() {
     get_remote_versions
-
-    local LIST=()
-    mapfile -n 1 LIST < <(echo "${TOOL_REMOTE_VERSIONS[@]}")
-    TOOL_LATEST_VER="${LIST[0]}"
+    TOOL_LATEST_VER="${TOOL_REMOTE_VERSIONS[0]}"
+    VER_NAME=$TOOL_NAME-$PLATFORM-$TOOL_LATEST_VER
+    PKG_NAME=$VER_NAME$PKG_EXT
+    TOOL_URL_PKG=${TOOL_URL_PKG-$TOOL_URL_DIR/$TOOL_LATEST_VER/$PKG_NAME}
 }
 
 print_remote_tool_versions() {
     check_curl_exists
 
+    detect_platform
     get_remote_versions
-    echo "${TOOL_REMOTE_VERSIONS[@]}"
+    printf '%s\n' "${TOOL_REMOTE_VERSIONS[@]}"
 }
 
 uninstall_tool_version() {
@@ -551,6 +545,7 @@ uninstall_tool_version() {
 print_latest_remote_version() {
     check_curl_exists
 
+    detect_platform
     get_latest_remote_version
     echo "$TOOL_LATEST_VER"
 }

@@ -8,7 +8,7 @@ Upgrades to the latest version of Zig, or manages more versions of Zig on the sa
 * Simple. Switches the version globally, no environment variable changes needed.
 * Efficient. Just run `zigup up`.
 
-Platforms: `darwin-x86_64`, `darwin-aarch64`, `freebsd-x86_64`, `linux-x86`, `linux-x86_64`, `linux-aarch64`, `linux-armv7a`, `linux-powerpc64le`, `linux-riscv64`, `windows-x86`, `windows-x86_64`, `windows-aarch64`.
+Platforms: `macos-x86_64`, `macos-aarch64`, `freebsd-x86_64`, `linux-x86`, `linux-x86_64`, `linux-aarch64`, `linux-armv7a`, `linux-powerpc64le`, `linux-riscv64`, `windows-x86`, `windows-x86_64`, `windows-aarch64`.
 
 ## Getting Started
 
@@ -30,7 +30,7 @@ Make sure that you have `bash` 4 or newer and `curl` available, execute the foll
 
     curl -fSs https://raw.githubusercontent.com/prantlf/zigup/master/install.sh | bash
 
-Both the `zigup` and `go` should be executable in any directory via the `PATH` environment variable. The installer script will modify the RC-file of the shell, from which you launched it. The following RC-files are supported:
+Both the `zigup` and `zig` should be executable in any directory via the `PATH` environment variable. The installer script will modify the RC-file of the shell, from which you launched it. The following RC-files are supported:
 
     ~/.bashrc
     ~/.zshrc
@@ -38,7 +38,7 @@ Both the `zigup` and `go` should be executable in any directory via the `PATH` e
 
 If you use other shell or more shells, update the other RC-files by putting both the installer directory and the Zig binary directory to `PATH`, for example:
 
-    $HOME/.zigup:$HOME/.go/bin:$PATH
+    $HOME/.zigup:$HOME/.zig:$PATH
 
 Start a new shell after the installer finishes. Or extend the `PATH` in the current shell as the instructions on the console will tell you.
 
@@ -47,13 +47,13 @@ Start a new shell after the installer finishes. Or extend the `PATH` in the curr
 | Path       | Description                                             |
 |:-----------|:--------------------------------------------------------|
 | `~/.zigup` | directory with the installer script and versions of Zig |
-| `~/.go`    | symbolic link to the currently active version of Zig    |
+| `~/.zig`   | symbolic link to the currently active version of Zig    |
 
 For example, with the Zig 1.23.0 activated:
 
     /home/prantlf/.zigup
-      ├── 1.22.0   (another version)
-      ├── 1.23.0   (linked to /home/prantlf/.go)
+      ├── 0.12.0   (another version)
+      ├── 0.13.0   (linked to /home/prantlf/.zig)
       └── zigup    (installer script)
 
 ## Usage
