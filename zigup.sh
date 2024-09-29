@@ -603,7 +603,7 @@ get_remote_versions() {
 }
 
 get_latest_remote_version() {
-    get_remote_versions
+    get_remote_versions 1
     TOOL_LATEST_VER="${TOOL_REMOTE_VERSIONS[0]}"
     VER_NAME=$TOOL_NAME-$PLATFORM-$TOOL_LATEST_VER
     PKG_NAME=$VER_NAME$PKG_EXT
