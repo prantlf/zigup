@@ -169,6 +169,10 @@ check_tar_exists() {
     check_command_exists tar 'unpacking tar archives'
 }
 
+check_unxz_exists() {
+    check_command_exists unxz 'decompressing tar.xz archives'
+}
+
 check_unzip_exists() {
     check_command_exists unzip 'unpacking zip archives'
 }
@@ -288,7 +292,7 @@ download_tool_version() {
         command mkdir "$INST_DIR/$VER" ||
             fail 'failed creating' "directory $INST_DIR/$VER"
         start_debug "downloading and unpacking $TOOL_URL_PKG'"
-        command curl -f "$PROGRESS" "$TOOL_URL_PKG" | command tar -xzf - --strip-components=1 -C "$INST_DIR/$VER" ||
+        command curl -f "$PROGRESS" "$TOOL_URL_PKG" | command unxz | command tar x --strip-components=1 -C "$INST_DIR/$VER" ||
             fail 'failed downloading and unpacking' "$TOOL_URL_PKG to $INST_DIR/$VER"
         end_debug
     fi
@@ -404,6 +408,7 @@ install_tool_version() {
         check_unzip_exists
     else
         check_tar_exists
+        check_unxz_exists
     fi
 
     local VER
@@ -444,6 +449,7 @@ upgrade_tool_version() {
         check_unzip_exists
     else
         check_tar_exists
+        check_unxz_exists
     fi
 
     get_latest_remote_version
