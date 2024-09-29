@@ -197,6 +197,9 @@ install_installer() {
     if [[ "${NO_INSTRUCTIONS-}" == "" ]]; then
         print_introduction
     fi
+    if [[ "${DO_UPGRADE-}" == "1" ]]; then
+        exec "$INST_DIR/$INST_NAME" upgrade
+    fi
 }
 
 readonly TASK="${1-}"
