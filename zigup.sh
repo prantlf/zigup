@@ -287,7 +287,7 @@ check_remote_tool_version_exists() {
 
 download_tool_version() {
     local VER=$1
-    if [[ " ${INST_LOCAL[*]} " =~ [[:space:]]${VER}[[:space:]] ]]; then
+    if [[ " ${INST_LOCAL[*]-} " =~ [[:space:]]${VER}[[:space:]] ]]; then
         command rm -r "$INST_DIR/$VER" ||
             fail 'failed deleting' "directory $INST_DIR/$VER"
     fi
@@ -367,7 +367,7 @@ find_remote_tool_version_by_arg() {
 
 remove_from_local_tool_versions() {
     local VER=$1
-    local OLD_LOCAL=("${INST_LOCAL[@]}")
+    local OLD_LOCAL=("${INST_LOCAL[@]-}")
     INST_LOCAL=()
     for DIR in "${OLD_LOCAL[@]}"; do
         if [[ "$DIR" != "$VER" ]]; then
@@ -379,7 +379,7 @@ remove_from_local_tool_versions() {
 get_latest_local_tool_version() {
     check_sort_exists
 
-    if [[ "${INST_LOCAL[*]}" != "" ]]; then
+    if [[ "${INST_LOCAL[*]-}" != "" ]]; then
         local SORTED
         SORTED=$(printf '%s\n' "${INST_LOCAL[@]}" | command sort -Vr) ||
             fail 'failed sorting' "versions: ${INST_LOCAL[*]}"
@@ -394,7 +394,7 @@ find_local_tool_version_by_arg() {
 
     check_sort_exists
 
-    if [[ "${INST_LOCAL[*]}" != "" ]]; then
+    if [[ "${INST_LOCAL[*]-}" != "" ]]; then
         if [[ "$DESC" = "1" ]]; then
             DESC="r"
         else
@@ -428,7 +428,7 @@ get_local_tool_version_by_arg() {
 
 exists_local_tool_version() {
     local VER=$1
-    if  [ -n "$VER" ] && [[ " ${INST_LOCAL[*]} " =~ [[:space:]]${VER}[[:space:]] ]]; then
+    if  [ -n "$VER" ] && [[ " ${INST_LOCAL[*]-} " =~ [[:space:]]${VER}[[:space:]] ]]; then
         VER_EXISTS=1
     else
         VER_EXISTS=
@@ -575,7 +575,7 @@ update_installer_and_upgrade_tool_version() {
 print_local_tool_versions() {
     check_installer_directory_exists
     get_local_tool_versions
-    printf '%s\n' "${INST_LOCAL[@]}" 
+    printf '%s\n' "${INST_LOCAL[@]-}" 
 }
 
 get_remote_versions() {
