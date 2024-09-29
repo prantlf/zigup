@@ -1,5 +1,11 @@
 # Changes
 
+## [0.2.1](https://github.com/prantlf/zigup/compare/v0.2.0...v0.2.1) (2024-09-29)
+
+### Bug Fixes
+
+* Fix the task "latest" ([6ff3d46](https://github.com/prantlf/zigup/commit/6ff3d46eae69752111e92d3094f5d3cc78eb3946))
+
 ## [0.2.0](https://github.com/prantlf/zigup/compare/v0.1.1...v0.2.0) (2024-09-29)
 
 ### Features
