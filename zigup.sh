@@ -182,54 +182,68 @@ check_sort_exists() {
 }
 
 detect_platform() {
-    check_uname_exists
+    local UNAME
+    PLATFORM=${PLATFORM-}
+    if [ -z "$PLATFORM" ]; then
+        check_uname_exists
 
-    read -ra UNAME < <(command uname -ms)
-    OS=${UNAME[0],,}
-    ARCH=${UNAME[1],,}
+        read -ra UNAME < <(command uname -ms)
+        OS=${UNAME[0],,}
+        ARCH=${UNAME[1],,}
 
-    if [[ $OS = darwin ]]; then
-        OS=macos
-    elif ! [[ ' macos freebsd linux windows ' =~ [[:space:]]${OS}[[:space:]] ]]; then
-        fail unsupported "operating system $OS"
-    fi
-
-    case $ARCH in
-    386 | i386 | i686)
-        ARCH=x86
-        ;;
-    arm64 | armv8 | armv8l)
-        ARCH=aarch64
-        ;;
-    armv7 | armv7l)
-        ARCH=armv7a
-        ;;
-    ppc64le | ppc64_le)
-        ARCH=powerpc64le
-        ;;
-    s390)
-        ARCH=s390x
-        ;;
-    amd64)
-        ARCH=x86_64
-        ;;
-    esac
-
-    if ! [[ " x86 x86_64 armv71 aarch64 ppc64le riscv64 " =~ [[:space:]]${ARCH}[[:space:]] ]]; then
-        fail unsupported "architecture $ARCH"
-    fi
-
-    PLATFORM=$OS-$ARCH
-
-    if [[ $PLATFORM = macos-x86_64 ]]; then
-        if [[ $(sysctl -n sysctl.proc_translated 2>/dev/null) = 1 ]]; then
-            PLATFORM=macos-aarch64
-            pass 'changing platform' "to $PLATFORM because Rosetta 2 was detected"
+        if [[ $OS = darwin ]]; then
+            OS=macos
+        elif ! [[ ' macos freebsd linux windows ' =~ [[:space:]]${OS}[[:space:]] ]]; then
+            fail unsupported "operating system $OS"
         fi
-    fi
 
-    if ! [[ " macos-x86_64 macos-aarch64 freebsd-x86_64 linux-x86 linux-x86_64 linux-aarch64 linux-armv7a linux-powerpc64le linux-riscv64 windows-x86 windows-x86_64 windows-aarch64 " =~ [[:space:]]${PLATFORM}[[:space:]] ]]; then
-        fail unsupported "platform $PLATFORM"
+        case $ARCH in
+        386 | i386 | i686)
+            ARCH=x86
+            ;;
+        arm64 | armv8 | armv8l)
+            ARCH=aarch64
+            ;;
+        armv7 | armv7l)
+            ARCH=armv7a
+            ;;
+        ppc64le | ppc64_le)
+            ARCH=powerpc64le
+            ;;
+        s390)
+            ARCH=s390x
+            ;;
+        amd64)
+            ARCH=x86_64
+            ;;
+        esac
+
+        if ! [[ " x86 x86_64 armv71 aarch64 ppc64le riscv64 " =~ [[:space:]]${ARCH}[[:space:]] ]]; then
+            fail unsupported "architecture $ARCH"
+        fi
+
+        PLATFORM=$OS-$ARCH
+
+        if [[ $PLATFORM = macos-x86_64 ]]; then
+            if [[ $(sysctl -n sysctl.proc_translated 2>/dev/null) = 1 ]]; then
+                PLATFORM=macos-aarch64
+                pass 'changing platform' "to $PLATFORM because Rosetta 2 was detected"
+            fi
+        fi
+
+        if ! [[ " macos-x86_64 macos-aarch64 freebsd-x86_64 linux-x86 linux-x86_64 linux-aarch64 linux-armv7a linux-powerpc64le linux-riscv64 windows-x86 windows-x86_64 windows-aarch64 " =~ [[:space:]]${PLATFORM}[[:space:]] ]]; then
+            fail unsupported "platform $PLATFORM"
+        fi
+    else
+        IFS='-' read -ra UNAME <<< "$PLATFORM"
+        OS=${UNAME[0],,}
+        if [ -z "$OS" ]; then
+            fail unrecognised "operating system in $PLATFORM"
+        fi
+        ARCH=${UNAME[1],,}
+        if [ -z "$OS" ]; then
+            fail unrecognised "architecture in $PLATFORM"
+        fi
     fi
 
     if [[ $OS = windows ]]; then

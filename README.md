@@ -16,6 +16,8 @@ Make sure that you have `bash` 4 or newer and `curl` available, execute the foll
 
     curl -fSs https://raw.githubusercontent.com/prantlf/zigup/master/install.sh | bash
 
+Before you continue, make sure that you have the following tools available: `curl`, `grep`, `jq`, `ln`, `rm`, `rmdir`, `sed`, `tar` (non-Windows), `uname`, `unxz` (non-Windows), `unzip` (Windows). It's likely that `jq` will be missing. You can install it like this on Debian: `apt-get install -y jq`.
+
 Install the latest version of Zig, if it hasn't been installed yet:
 
     zigup install latest
@@ -49,7 +51,7 @@ Start a new shell after the installer finishes. Or extend the `PATH` in the curr
 | `~/.zigup` | directory with the installer script and versions of Zig |
 | `~/.zig`   | symbolic link to the currently active version of Zig    |
 
-For example, with the Zig 1.23.0 activated:
+For example, with the Zig 0.13.0 activated:
 
     /home/prantlf/.zigup
       ├── 0.12.0   (another version)
@@ -84,6 +86,22 @@ If you enable `bash` debugging, every line of the script will be printed on the 
 You can debug the installer too:
 
     curl -fSs https://raw.githubusercontent.com/prantlf/zigup/master/install.sh | bash -x
+
+## Platform Detection
+
+### Environment Variables
+
+The following environment variables can be set before running `install.sh` or `zigup`, if you know what you're doing:
+
+| Variable        | Default value                           |
+|:----------------|:----------------------------------------|
+| `PLATFORM`      | detected using `uname`                  |
+| `OS`            | part of `PLATFORM` before `-`           |
+| `ARCH`          | part of `PLATFORM` after `-`            |
+| `TOOL_URL_LIST` | https://ziglang.org/download/index.json |
+| `TOOL_URL_DIR`  | https://ziglang.org/download            |
+| `INST_DIR`      | `$HOME/.zigup`                          |
+| `TOOL_DIR`      | `$HOME/.zig`                            |
 
 ## Contributing
 
