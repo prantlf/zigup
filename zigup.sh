@@ -202,9 +202,18 @@ detect_platform() {
     if [ -z "$PLATFORM" ]; then
         check_uname_exists
 
-        read -ra UNAME < <(command uname -ms)
-        OS=${UNAME[0],,}
-        ARCH=${UNAME[1],,}
+        OS=${OS-}
+        ARCH=${ARCH-}
+        if [ -z "$OS" ] || [ -z "$ARCH" ]; then
+            local UNAME
+            read -ra UNAME < <(command uname -ms)
+            if [ -z "$OS" ]; then
+                OS=${UNAME[0],,}
+            fi
+            if [ -z "$ARCH" ]; then
+                ARCH=${UNAME[1],,}
+            fi
+        fi
 
         if [[ $OS = darwin ]]; then
             OS=macos
