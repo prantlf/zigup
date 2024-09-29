@@ -77,6 +77,8 @@ For example, with the Zig 0.13.0 activated:
       help                 print usage instructions for this tool
       version              print the version of this tool
 
+You can enter just `MAJ` or `MAJ.MIN` as `<version>`, instead of the full `MAJ.MIN.PAT`. When using the `install` or `use` tasks, the *most* recent full version that starts by the entered partial version will be picked. When using the `uninstall` task, the *least* recent full version that starts by the entered partial version will be picked.
+
 ## Debugging
 
 If you enable `bash` debugging, every line of the script will be printed on the console. You'll be able to see values of local variables and follow the script execution:
