@@ -1,5 +1,11 @@
 # Changes
 
+## [0.2.2](https://github.com/prantlf/zigup/compare/v0.2.1...v0.2.2) (2024-09-29)
+
+### Bug Fixes
+
+* Recognise OS and ARCH variables except for PLATFORM ([4adf479](https://github.com/prantlf/zigup/commit/4adf47949e9dd029b5c01cae712693b5a6a507a6))
+
 ## [0.2.1](https://github.com/prantlf/zigup/compare/v0.2.0...v0.2.1) (2024-09-29)
 
 ### Bug Fixes
