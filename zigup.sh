@@ -286,10 +286,12 @@ compare_versions() {
 
     while [[ $a || $b ]]; do
         x=${a%%.*} y=${b%%.*}
+        # shellcheck disable=SC2309
         if [[ "10#${x:-0}" -gt "10#${y:-0}" ]]; then
             RESULT=1
             return
         fi
+        # shellcheck disable=SC2309
         if [[ "10#${x:-0}" -lt "10#${y:-0}" ]]; then
             RESULT=2
             return
