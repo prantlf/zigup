@@ -1,5 +1,11 @@
 # Changes
 
+## [0.3.0](https://github.com/prantlf/zigup/compare/v0.2.2...v0.3.0) (2025-06-07)
+
+### Features
+
+* Format archive name for downloading as arch-os for version greater than 0.14.0 ([726fb2d](https://github.com/prantlf/zigup/commit/726fb2d98c4e813948fe858b1365579f8bcbc06d))
+
 ## [0.2.2](https://github.com/prantlf/zigup/compare/v0.2.1...v0.2.2) (2024-09-29)
 
 ### Bug Fixes
