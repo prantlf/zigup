@@ -279,11 +279,44 @@ detect_platform() {
     pass 'detected' "platform $PLATFORM"
 }
 
-check_remote_tool_version_exists() {
+RESULT=
+
+compare_versions() {
+    local a=$1 b=$2 x y
+
+    while [[ $a || $b ]]; do
+        x=${a%%.*} y=${b%%.*}
+        if [[ "10#${x:-0}" -gt "10#${y:-0}" ]]; then
+            RESULT=1
+            return
+        fi
+        if [[ "10#${x:-0}" -lt "10#${y:-0}" ]]; then
+            RESULT=2
+            return
+        fi
+        a=${a:${#x} + 1} b=${b:${#y} + 1}
+    done
+
+    RESULT=0
+}
+
+set_ver_and_pkg_name_and_tool_url() {
     local VER=$1
-    VER_NAME=$TOOL_NAME-$PLATFORM-$VER
+    local URL_PLATFORM=
+    compare_versions "$VER" "0.14.0"
+    if [ $RESULT -eq 1 ]; then
+        URL_PLATFORM=$ARCH-$OS
+    else
+        URL_PLATFORM=$PLATFORM
+    fi
+    VER_NAME=$TOOL_NAME-$URL_PLATFORM-$VER
     PKG_NAME=$VER_NAME$PKG_EXT
     TOOL_URL_PKG=${TOOL_URL_PKG-$TOOL_URL_DIR/$VER/$PKG_NAME}
+}
+
+check_remote_tool_version_exists() {
+    local VER=$1
+    set_ver_and_pkg_name_and_tool_url "$VER"
     start_debug "checking $TOOL_URL_PKG"
     TOOL_EXISTS=$(command curl -fI "$PROGRESS" "$TOOL_URL_PKG") ||
         fail 'failed accessing' "$TOOL_URL_PKG"
@@ -369,9 +402,7 @@ find_remote_tool_version_by_arg() {
             break
         fi
     done
-    VER_NAME=$TOOL_NAME-$PLATFORM-$VER
-    PKG_NAME=$VER_NAME$PKG_EXT
-    TOOL_URL_PKG=${TOOL_URL_PKG-$TOOL_URL_DIR/$VER/$PKG_NAME}
+    set_ver_and_pkg_name_and_tool_url "$VER"
 }
 
 remove_from_local_tool_versions() {
@@ -614,9 +645,7 @@ get_remote_versions() {
 get_latest_remote_version() {
     get_remote_versions 1
     TOOL_LATEST_VER="${TOOL_REMOTE_VERSIONS[0]}"
-    VER_NAME=$TOOL_NAME-$PLATFORM-$TOOL_LATEST_VER
-    PKG_NAME=$VER_NAME$PKG_EXT
-    TOOL_URL_PKG=${TOOL_URL_PKG-$TOOL_URL_DIR/$TOOL_LATEST_VER/$PKG_NAME}
+    set_ver_and_pkg_name_and_tool_url "$TOOL_LATEST_VER"
 }
 
 print_remote_tool_versions() {
